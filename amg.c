@@ -111,7 +111,7 @@ main( hypre_int argc,
    HYPRE_Int           P_max_elmts = 4;
    HYPRE_Int           coarsen_type = 8;
    HYPRE_Int           num_sweeps = 1;
-   HYPRE_Int           relax_type = -1;
+   HYPRE_Int           relax_type = 18;
    HYPRE_Int           rap2 = 0;
    //HYPRE_Int    mod_rap2=0;
    HYPRE_Int           keepTranspose = 1;
@@ -122,7 +122,6 @@ main( hypre_int argc,
    HYPRE_BigInt        system_size;
    HYPRE_Real          cum_nnz_AP = 1;
    HYPRE_Real          FOM1 = 0, FOM2 = 0;
-   HYPRE_Real          total_time = 0;
 
    /* parameters for GMRES */
    HYPRE_Int           k_dim = 100;
@@ -543,13 +542,12 @@ main( hypre_int argc,
       HYPRE_PCGSetRelChange(pcg_solver, rel_change);
       HYPRE_PCGSetPrintLevel(pcg_solver, ioutdat);
       HYPRE_PCGSetAbsoluteTol(pcg_solver, atol);
-      //HYPRE_PCGSetRecomputeResidual(pcg_solver, 1);
 
       /* use BoomerAMG as preconditioner */
       if (myid == 0 && print_stats) { hypre_printf("Solver: AMG-PCG\n"); }
       HYPRE_BoomerAMGCreate(&pcg_precond);
       HYPRE_BoomerAMGSetTol(pcg_precond, pc_tol);
-      /*HYPRE_BoomerAMGSetCoarsenType(pcg_precond, coarsen_type);*/
+      HYPRE_BoomerAMGSetCoarsenType(pcg_precond, coarsen_type);
       HYPRE_BoomerAMGSetInterpType(pcg_precond, interp_type);
       HYPRE_BoomerAMGSetPMaxElmts(pcg_precond, P_max_elmts);
       HYPRE_BoomerAMGSetPrintLevel(pcg_precond, poutdat);
@@ -599,7 +597,6 @@ main( hypre_int argc,
       HYPRE_BoomerAMGGetCumNnzAP(pcg_precond, &cum_nnz_AP);
 
       FOM1 = cum_nnz_AP / wall_time;
-      total_time = wall_time;
 
 #ifdef USE_CALIPER
       adiak_namevalue("Setup-FOM", adiak_general, NULL, "%f", FOM1);
@@ -644,8 +641,7 @@ main( hypre_int argc,
 
       HYPRE_ParCSRPCGDestroy(pcg_solver);
 
-      FOM2 = cum_nnz_AP / wall_time;
-      total_time += 3*wall_time;
+      FOM2 = cum_nnz_AP * (HYPRE_Real)num_iterations / wall_time;
 
       if (myid == 0)
       {
@@ -654,12 +650,12 @@ main( hypre_int argc,
          hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
          hypre_printf("\n");
          hypre_printf ("\nFOM_Solve: nnz_AP * iterations / Solve Phase Time: %e\n\n", FOM2);
-         FOM1 = cum_nnz_AP/total_time;
+         FOM1 = 0.5 * (FOM1 + FOM2);
 #ifdef USE_CALIPER
          adiak_namevalue("Solve-FOM", adiak_general, NULL, "%f", FOM2);
          adiak_namevalue("Final-FOM", adiak_general, NULL, "%f", FOM1);
 #endif
-         hypre_printf ("\n\nFigure of Merit (FOM): nnz_AP / (Setup Phase Time + 3 * Solve Phase Time) %e\n\n", FOM1);
+         hypre_printf ("\n\nFigure of Merit (FOM): %e\n\n", FOM1);
       }
 
 #ifdef USE_CALIPER
@@ -702,7 +698,7 @@ main( hypre_int argc,
 
       HYPRE_BoomerAMGCreate(&pcg_precond);
       HYPRE_BoomerAMGSetTol(pcg_precond, pc_tol);
-      /*HYPRE_BoomerAMGSetCoarsenType(pcg_precond, coarsen_type);*/
+      HYPRE_BoomerAMGSetCoarsenType(pcg_precond, coarsen_type);
       HYPRE_BoomerAMGSetInterpType(pcg_precond, interp_type);
       HYPRE_BoomerAMGSetPMaxElmts(pcg_precond, P_max_elmts);
       HYPRE_BoomerAMGSetPrintLevel(pcg_precond, poutdat);
@@ -748,7 +744,6 @@ main( hypre_int argc,
       HYPRE_BoomerAMGGetCumNnzAP(pcg_precond, &cum_nnz_AP);
 
       FOM1 = cum_nnz_AP / wall_time;
-      total_time = wall_time;
 
       if (myid == 0)
       {
@@ -789,8 +784,7 @@ main( hypre_int argc,
       HYPRE_BoomerAMGDestroy(pcg_precond);
 
       HYPRE_ParCSRGMRESDestroy(pcg_solver);
-      FOM2 = cum_nnz_AP / wall_time;
-      total_time += wall_time;
+      FOM2 = cum_nnz_AP * (HYPRE_Real)num_iterations / wall_time;
 
       if (myid == 0)
       {
@@ -798,13 +792,13 @@ main( hypre_int argc,
          hypre_printf("Iterations = %d\n", num_iterations);
          hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
          hypre_printf("\n");
-         hypre_printf ("\nFOM_Solve: nnz_AP / Solve Phase Time: %e\n\n", FOM2);
-         FOM1 = cum_nnz_AP / total_time;
+         hypre_printf ("\nFOM_Solve: nnz_AP * iterations / Solve Phase Time: %e\n\n", FOM2);
+         FOM1 = 0.5 * (FOM1 + FOM2);
 #ifdef USE_CALIPER
          adiak_namevalue("Solve-FOM", adiak_general, NULL, "%f", FOM2);
          adiak_namevalue("Final-FOM", adiak_general, NULL, "%f", FOM1);
 #endif
-         hypre_printf ("\n\nFigure of Merit (FOM): nnz_AP / (Setup Phase Time + Solve Phase Time) %e\n\n", FOM1);
+         hypre_printf ("\n\nFigure of Merit (FOM): %e\n\n", FOM1);
       }
 #ifdef USE_CALIPER
       CALI_MARK_END("Problem");
