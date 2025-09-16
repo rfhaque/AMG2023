@@ -768,7 +768,7 @@ main( hypre_int argc,
 //      CALI_MARK_BEGIN("FOMStep");
 //#endif
 
-      HYPRE_GMRESSolve (pcg_solver, (HYPRE_Matrix)parcsr_A, (HYPRE_Vector)b, (HYPRE_Vector)x);
+      time_index = HYPRE_GMRESSolve (pcg_solver, (HYPRE_Matrix)parcsr_A, (HYPRE_Vector)b, (HYPRE_Vector)x);
 
       hypre_MPI_Barrier(comm);
 //#ifdef USE_CALIPER
@@ -779,7 +779,7 @@ main( hypre_int argc,
       CALI_MARK_END("Solve");
 #endif
       hypre_GetTiming("Problem 1: AMG-GMRES Solve Time", &wall_time, comm);
-//      hypre_FinalizeTiming(time_index);
+      hypre_FinalizeTiming(time_index);
       hypre_ClearTiming();
       fflush(NULL);
 
