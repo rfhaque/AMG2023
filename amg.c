@@ -758,30 +758,30 @@ main( hypre_int argc,
 #ifdef USE_CALIPER
       adiak_namevalue("Setup-FOM", adiak_general, NULL, "%f", FOM1);
 #endif
-//      time_index = hypre_InitializeTiming("GMRES Solve");
+      time_index = hypre_InitializeTiming("GMRES Solve");
       hypre_MPI_Barrier(comm);
 #ifdef USE_CALIPER
       CALI_MARK_BEGIN("Solve");
 #endif
-//      hypre_BeginTiming(time_index);
-//#ifdef USE_CALIPER
-//      CALI_MARK_BEGIN("FOMStep");
-//#endif
+      hypre_BeginTiming(time_index);
+#ifdef USE_CALIPER
+      CALI_MARK_BEGIN("FOMStep");
+#endif
 
-      HYPRE_GMRESSolve (pcg_solver, (HYPRE_Matrix)parcsr_A, (HYPRE_Vector)b, (HYPRE_Vector)x, &wall_time);
+      HYPRE_GMRESSolve (pcg_solver, (HYPRE_Matrix)parcsr_A, (HYPRE_Vector)b, (HYPRE_Vector)x);
 
       hypre_MPI_Barrier(comm);
-//#ifdef USE_CALIPER
-//      CALI_MARK_END("FOMStep");
-//#endif
-//      hypre_EndTiming(time_index);
+#ifdef USE_CALIPER
+      CALI_MARK_END("FOMStep");
+#endif
+      hypre_EndTiming(time_index);
 #ifdef USE_CALIPER
       CALI_MARK_END("Solve");
 #endif
-      //hypre_GetTiming("Problem 1: AMG-GMRES Solve Time", &wall_time, comm);
-      //hypre_FinalizeTiming(time_index);
-      //hypre_ClearTiming();
-      //fflush(NULL);
+      hypre_GetTiming("Problem 1: AMG-GMRES Solve Time", &wall_time, comm);
+      hypre_FinalizeTiming(time_index);
+      hypre_ClearTiming();
+      fflush(NULL);
 
       HYPRE_GMRESGetNumIterations(pcg_solver, &num_iterations);
       HYPRE_GMRESGetFinalRelativeResidualNorm(pcg_solver, &final_res_norm);
