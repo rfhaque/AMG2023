@@ -420,7 +420,7 @@ main( hypre_int argc,
    /* default execution policy */
    HYPRE_SetExecutionPolicy(default_exec_policy);
 
-#ifdef HYPRE_USING_GPU
+#if defined(HYPRE_USING_GPU)
    HYPRE_SetSpMVUseVendor(spmv_use_vendor);
    HYPRE_SetSpGemmUseVendor(spgemm_use_vendor);
 #endif
@@ -814,7 +814,7 @@ main( hypre_int argc,
 #ifdef HYPRE_USING_UMPIRE
    if (myid == 0)
    {
-#if defined(HYPRE_USING_UNIFIED_MEMORY)
+#ifdef HYPRE_USING_UNIFIED_MEMORY
       size_t um_hwm = umpire_allocator_get_high_watermark(&um_allocator);
       printf("UMPIRE UM Pool size %lu bytes, high water mark %lu bytes\n", umpire_um_pool_size, um_hwm);
 #else

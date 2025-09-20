@@ -24,6 +24,7 @@ option(AMG_WITH_HIP "Use HIP" FALSE)
 option(AMG_WITH_CALIPER "Enable Caliper" FALSE)
 option(AMG_WITH_OMP "Enable OpenMP" FALSE)
 option(AMG_WITH_UMPIRE "Enable Umpire support (requires Umpire support in HYPRE)" FALSE)
+option(AMG_WITH_UM "Enable UM support in Umpire (requires Umpire to be enabled)" FALSE)
 
 find_library(HYPRE_LIBRARIES
     NAMES HYPRE
@@ -96,6 +97,10 @@ if (AMG_WITH_UMPIRE)
   list(APPEND AMG_DEPENDENCIES
     umpire)
   set(HYPRE_USING_UMPIRE TRUE)
+    set(HYPRE_USING_UMPIRE TRUE)
+  if (AMG_WITH_UM)
+    set(HYPRE_USING_UNIFIED_MEMORY TRUE)
+  endif()
 endif()
 
 configure_file(
