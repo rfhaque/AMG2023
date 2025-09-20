@@ -368,7 +368,7 @@ main( hypre_int argc,
    /*-----------------------------------------------------------------
     * UMPIRE Pools
     *-----------------------------------------------------------------*/
-#ifdef HYPRE_USING_UMPIRE
+#if defined(HYPRE_USING_UMPIRE)
    char device_pool_name[] = "AMG_DEVICE_POOL";
    char um_pool_name[] = "AMG_UM_POOL";
    size_t umpire_dev_pool_size = ((size_t) dev_pool_size) * 1024 * 1024 * 1024;
@@ -403,7 +403,7 @@ main( hypre_int argc,
    HYPRE_SetUmpireDevicePoolName(device_pool_name);
    HYPRE_SetUmpireUMPoolName(um_pool_name);
    /* allocate and free some memory to make sure pool is allocated */
-#ifdef HYPRE_USING_UNIFIED_MEMORY
+#if defined(HYPRE_USING_UNIFIED_MEMORY)
    char *tmp_ptr = hypre_TAlloc(char, umpire_um_pool_size, memory_location);
 #else
    char *tmp_ptr = hypre_TAlloc(char, umpire_dev_pool_size, memory_location);
@@ -533,9 +533,6 @@ main( hypre_int argc,
       CALI_MARK_BEGIN("Setup");
 #endif
       hypre_BeginTiming(time_index);
-#ifdef USE_CALIPER
-      CALI_MARK_BEGIN("FOMStep");
-#endif
       HYPRE_ParCSRPCGCreate(comm, &pcg_solver);
       HYPRE_PCGSetMaxIter(pcg_solver, max_iter);
       HYPRE_PCGSetTol(pcg_solver, tol);
@@ -584,9 +581,6 @@ main( hypre_int argc,
                      (HYPRE_Vector)b, (HYPRE_Vector)x);
 
       hypre_MPI_Barrier(comm);
-#ifdef USE_CALIPER
-      CALI_MARK_END("FOMStep");
-#endif
       hypre_EndTiming(time_index);
 #ifdef USE_CALIPER
       CALI_MARK_END("Setup");
@@ -616,17 +610,11 @@ main( hypre_int argc,
       CALI_MARK_BEGIN("Solve");
 #endif
       hypre_BeginTiming(time_index);
-#ifdef USE_CALIPER
-      CALI_MARK_BEGIN("FOMStep");
-#endif
 
       HYPRE_PCGSolve(pcg_solver, (HYPRE_Matrix)parcsr_A,
                      (HYPRE_Vector)b, (HYPRE_Vector)x);
 
       hypre_MPI_Barrier(comm);
-#ifdef USE_CALIPER
-      CALI_MARK_END("FOMStep");
-#endif
       hypre_EndTiming(time_index);
 #ifdef USE_CALIPER
       CALI_MARK_END("Solve");
@@ -684,9 +672,6 @@ main( hypre_int argc,
       CALI_MARK_BEGIN("Setup");
 #endif
       hypre_BeginTiming(time_index);
-#ifdef USE_CALIPER
-      CALI_MARK_BEGIN("FOMStep");
-#endif
 
       HYPRE_ParCSRGMRESCreate(comm, &pcg_solver);
       HYPRE_GMRESSetKDim(pcg_solver, k_dim);
@@ -733,9 +718,6 @@ main( hypre_int argc,
       HYPRE_GMRESSetup (pcg_solver, (HYPRE_Matrix)parcsr_A, (HYPRE_Vector)b, (HYPRE_Vector)x);
 
       hypre_MPI_Barrier(comm);
-#ifdef USE_CALIPER
-      CALI_MARK_END("FOMStep");
-#endif
       hypre_EndTiming(time_index);
 #ifdef USE_CALIPER
       CALI_MARK_END("Setup");
@@ -764,16 +746,10 @@ main( hypre_int argc,
       CALI_MARK_BEGIN("Solve");
 #endif
       hypre_BeginTiming(time_index);
-#ifdef USE_CALIPER
-      CALI_MARK_BEGIN("FOMStep");
-#endif
 
       HYPRE_GMRESSolve (pcg_solver, (HYPRE_Matrix)parcsr_A, (HYPRE_Vector)b, (HYPRE_Vector)x);
 
       hypre_MPI_Barrier(comm);
-#ifdef USE_CALIPER
-      CALI_MARK_END("FOMStep");
-#endif
       hypre_EndTiming(time_index);
 #ifdef USE_CALIPER
       CALI_MARK_END("Solve");
@@ -811,10 +787,10 @@ main( hypre_int argc,
 #endif
    }
 
-#ifdef HYPRE_USING_UMPIRE
+#if defined(HYPRE_USING_UMPIRE)
    if (myid == 0)
    {
-#ifdef HYPRE_USING_UNIFIED_MEMORY
+#if defined(HYPRE_USING_UNIFIED_MEMORY)
       size_t um_hwm = umpire_allocator_get_high_watermark(&um_allocator);
       printf("UMPIRE UM Pool size %lu bytes, high water mark %lu bytes\n", umpire_um_pool_size, um_hwm);
 #else
@@ -846,7 +822,7 @@ main( hypre_int argc,
    /* Finalize hypre */
    HYPRE_Finalize();
 
-#ifdef HYPRE_USING_UMPIRE
+#if defined(HYPRE_USING_UMPIRE)
    umpire_allocator_release(&dev_allocator);
    umpire_allocator_release(&um_allocator);
 #endif
