@@ -95,6 +95,7 @@ if (AMG_WITH_UMPIRE)
   find_package(umpire REQUIRED)
   list(APPEND AMG_DEPENDENCIES
     umpire)
+  set(HYPRE_USING_UMPIRE TRUE)
 endif()
 
 configure_file(
