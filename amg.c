@@ -368,7 +368,7 @@ main( hypre_int argc,
    /*-----------------------------------------------------------------
     * UMPIRE Pools
     *-----------------------------------------------------------------*/
-#if defined(HYPRE_USING_UMPIRE)
+#ifdef HYPRE_USING_UMPIRE
    char device_pool_name[] = "AMG_DEVICE_POOL";
    char um_pool_name[] = "AMG_UM_POOL";
    size_t umpire_dev_pool_size = ((size_t) dev_pool_size) * 1024 * 1024 * 1024;
@@ -403,7 +403,7 @@ main( hypre_int argc,
    HYPRE_SetUmpireDevicePoolName(device_pool_name);
    HYPRE_SetUmpireUMPoolName(um_pool_name);
    /* allocate and free some memory to make sure pool is allocated */
-#if defined(HYPRE_USING_UNIFIED_MEMORY)
+#ifdef HYPRE_USING_UNIFIED_MEMORY
    char *tmp_ptr = hypre_TAlloc(char, umpire_um_pool_size, memory_location);
 #else
    char *tmp_ptr = hypre_TAlloc(char, umpire_dev_pool_size, memory_location);
@@ -420,7 +420,7 @@ main( hypre_int argc,
    /* default execution policy */
    HYPRE_SetExecutionPolicy(default_exec_policy);
 
-#if defined(HYPRE_USING_GPU)
+#ifdef HYPRE_USING_GPU
    HYPRE_SetSpMVUseVendor(spmv_use_vendor);
    HYPRE_SetSpGemmUseVendor(spgemm_use_vendor);
 #endif
@@ -811,7 +811,7 @@ main( hypre_int argc,
 #endif
    }
 
-#if defined(HYPRE_USING_UMPIRE)
+#ifdef HYPRE_USING_UMPIRE
    if (myid == 0)
    {
 #if defined(HYPRE_USING_UNIFIED_MEMORY)
@@ -846,7 +846,7 @@ main( hypre_int argc,
    /* Finalize hypre */
    HYPRE_Finalize();
 
-#if defined(HYPRE_USING_UMPIRE)
+#ifdef HYPRE_USING_UMPIRE
    umpire_allocator_release(&dev_allocator);
    umpire_allocator_release(&um_allocator);
 #endif
