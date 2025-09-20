@@ -357,6 +357,7 @@ main( hypre_int argc,
     * Initialize : must be the first HYPRE function to call
     *-----------------------------------------------------------*/
    HYPRE_Init();
+   HYPRE_DeviceInitialize();
 
    hypre_EndTiming(time_index);
    hypre_GetTiming("Hypre init times", &wall_time, comm);
