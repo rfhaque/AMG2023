@@ -799,18 +799,18 @@ main( hypre_int argc,
       printf("UMPIRE UM Pool size %lu bytes, high water mark %lu bytes\n", umpire_um_pool_size, um_hwm);
 #ifdef USE_CALIPER
       HYPRE_Real um_pool_size = umpire_um_pool_size / (1024 * 1024 * 1024);
-      adiak_namevalue("um_pool_size", adiak_general, NULL, "%f", um_pool_size);
+      adiak_namevalue("umpire_um_pool_size", adiak_general, NULL, "%f", um_pool_size);
       HYPRE_Real um_hwm_gb = um_hwm / (1024 * 1024 * 1024);
-      adiak_namevalue("um_hwm", adiak_general, NULL, "%f", um_hwm_gb);
+      adiak_namevalue("umpire_um_high_water_mark", adiak_general, NULL, "%f", um_hwm_gb);
 #endif
 #else
       size_t dev_hwm = umpire_allocator_get_high_watermark(&dev_allocator);
       printf("UMPIRE Device Pool size %lu bytes, high water mark %lu bytes\n", umpire_dev_pool_size, dev_hwm);
 #ifdef USE_CALIPER
       HYPRE_Real dev_pool_size = umpire_dev_pool_size / (1024 * 1024 * 1024);
-      adiak_namevalue("dev_pool_size", adiak_general, NULL, "%f", dev_pool_size);
+      adiak_namevalue("umpire_device_pool_size", adiak_general, NULL, "%f", dev_pool_size);
       HYPRE_Real dev_hwm_gb = dev_hwm / (1024 * 1024 * 1024);
-      adiak_namevalue("dev_hwm", adiak_general, NULL, "%f", dev_hwm_gb);
+      adiak_namevalue("umpire_device_high_water_mark", adiak_general, NULL, "%f", dev_hwm_gb);
 #endif
 #endif
    }
