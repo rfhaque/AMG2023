@@ -189,6 +189,13 @@ main( hypre_int argc,
    adiak_namevalue("compiler", adiak_general, NULL, "%s", AMG2023_COMPILER_ID);
    adiak_namevalue("compiler version", adiak_general, NULL, "%s", AMG2023_COMPILER_VERSION);
 
+#ifdef HYPRE_RELEASE_VERSION
+   adiak_namevalue("Hypre version", adiak_general, NULL, "%s", HYPRE_RELEASE_VERSION);
+#endif
+#ifdef HYPRE_DEVELOP_STRING
+   adiak_namevalue("Hypre develop", adiak_general, NULL, "%s", HYPRE_DEVELOP_STRING);
+#endif
+
    CALI_MARK_BEGIN("main");
 #endif
 
@@ -799,18 +806,18 @@ main( hypre_int argc,
       printf("UMPIRE UM Pool size %lu bytes, high water mark %lu bytes\n", umpire_um_pool_size, um_hwm);
 #ifdef USE_CALIPER
       HYPRE_Real um_pool_size = umpire_um_pool_size / (1024 * 1024 * 1024);
-      adiak_namevalue("um_pool_size", adiak_general, NULL, "%f", um_pool_size);
+      adiak_namevalue("umpire_unifiedmemory_pool_size", adiak_general, NULL, "%f", um_pool_size);
       HYPRE_Real um_hwm_gb = um_hwm / (1024 * 1024 * 1024);
-      adiak_namevalue("um_hwm", adiak_general, NULL, "%f", um_hwm_gb);
+      adiak_namevalue("umpire_unifiedmemory_high_water_mark", adiak_general, NULL, "%f", um_hwm_gb);
 #endif
 #else
-      size_t dev_hwm = umpire_allocator_get_high_watermark(&dev_allocator);
-      printf("UMPIRE Device Pool size %lu bytes, high water mark %lu bytes\n", umpire_dev_pool_size, dev_hwm);
+      size_t device_hwm = umpire_allocator_get_high_watermark(&dev_allocator);
+      printf("UMPIRE Device Pool size %lu bytes, high water mark %lu bytes\n", umpire_dev_pool_size, device_hwm);
 #ifdef USE_CALIPER
-      HYPRE_Real dev_pool_size = umpire_dev_pool_size / (1024 * 1024 * 1024);
-      adiak_namevalue("dev_pool_size", adiak_general, NULL, "%f", dev_pool_size);
-      HYPRE_Real dev_hwm_gb = dev_hwm / (1024 * 1024 * 1024);
-      adiak_namevalue("dev_hwm", adiak_general, NULL, "%f", dev_hwm_gb);
+      HYPRE_Real device_pool_size = umpire_dev_pool_size / (1024 * 1024 * 1024);
+      adiak_namevalue("umpire_device_pool_size", adiak_general, NULL, "%f", device_pool_size);
+      HYPRE_Real device_hwm_gb = device_hwm / (1024 * 1024 * 1024);
+      adiak_namevalue("umpire_device_high_water_mark", adiak_general, NULL, "%f", device_hwm_gb);
 #endif
 #endif
    }
