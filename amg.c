@@ -32,7 +32,11 @@
 
 #include "HYPRE_config.h"
 #include "_hypre_utilities.h"
+#if HYPRE_RELEASE_NUMBER > 23300
 #include "_hypre_seq_mv.h"
+#else
+#include "seq_mv.h"
+#endif
 #include "HYPRE.h"
 #include "HYPRE_parcsr_mv.h"
 
