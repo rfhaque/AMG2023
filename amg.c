@@ -32,7 +32,11 @@
 
 #include "HYPRE_config.h"
 #include "_hypre_utilities.h"
+#if HYPRE_RELEASE_NUMBER > 23300
 #include "_hypre_seq_mv.h"
+#else
+#include "seq_mv.h"
+#endif
 #include "HYPRE.h"
 #include "HYPRE_parcsr_mv.h"
 
@@ -415,9 +419,9 @@ main( hypre_int argc,
    HYPRE_SetUmpireUMPoolName(um_pool_name);
    /* allocate and free some memory to make sure pool is allocated */
 #if defined(HYPRE_USING_UNIFIED_MEMORY)
-   char *tmp_ptr = hypre_TAlloc(char, umpire_um_pool_size, memory_location);
+   char *tmp_ptr = hypre_TAlloc(char, 1024, memory_location);
 #else
-   char *tmp_ptr = hypre_TAlloc(char, umpire_dev_pool_size, memory_location);
+   char *tmp_ptr = hypre_TAlloc(char, 1024, memory_location);
 #endif
    hypre_TFree(tmp_ptr, memory_location);
    /* make sure hypre doesn't own the pools */
